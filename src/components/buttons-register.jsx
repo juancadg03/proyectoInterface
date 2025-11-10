@@ -18,7 +18,6 @@ export default function ButtonsRegister({ onRegister }) {
         Registrar
       </button>
       <br /><br />
-
       <button className="back-button" onClick={() => navigate("/")}>
         <IoArrowBack size={22} />
       </button>

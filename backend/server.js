@@ -50,7 +50,7 @@ app.post('/api/login', async (req, res) => {
 
 app.get('/api/facultades', async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT cod_fact, nomFact FROM Facultad');
+    const [rows] = await pool.execute('SELECT cod_fact, nomFacu FROM Facultad');
     res.json(rows);
   } catch (err) {
     console.error(err);

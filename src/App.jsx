@@ -36,11 +36,9 @@ function Register() {
     <div className="background">
       <div className="register-card">
         <TitleRegister />
-
         {userType === "profesor" && <InputRegisterProfesor />}
         {userType === "estudiante" && <InputRegisterEstudiante />}
         {userType === "encargado" && <InputRegisterEncargado />}
-
         <ButtonsRegister />
       </div>
     </div>

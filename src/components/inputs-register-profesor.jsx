@@ -10,13 +10,15 @@ export default function InputRegisterProfesor() {
   const [facultades, setFacultades] = useState([]);
 
   // Cargar facultades desde el backend
-  useEffect(() => {
-    fetch("http://localhost:4000/api/facultades")
-      .then((res) => res.json())
-      .then((data) => setFacultades(data))
-      .catch((err) => console.error("Error al obtener facultades:", err));
-  }, []);
-
+useEffect(() => {
+  fetch("http://localhost:4000/api/facultades")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Facultades recibidas:", data);
+      setFacultades(data);
+    })
+    .catch((err) => console.error("Error al obtener facultades:", err));
+}, []);
   // Enviar datos al backend
   const handleSubmit = async () => {
     try {
@@ -74,7 +76,6 @@ export default function InputRegisterProfesor() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         /><br />
-
         <select
           className="input-select-facultad"
           value={facultad}
@@ -83,7 +84,7 @@ export default function InputRegisterProfesor() {
           <option value="">Seleccione facultad</option>
           {facultades.map((f) => (
             <option key={f.cod_fact} value={f.cod_fact}>
-              {f.nomFact}
+              {f.nomFacu}
             </option>
           ))}
         </select>

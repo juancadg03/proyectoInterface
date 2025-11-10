@@ -11,7 +11,7 @@ export default function InputRegisterEstudiante() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4000/api/register", {
+      const response = await fetch("http://localhost:4000/api/register/profesor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -29,7 +29,7 @@ export default function InputRegisterEstudiante() {
       }
     } catch (error) {
       console.error("Error al registrar:", error);
-      alert("⚠️ Error de conexión con el servidor");
+      alert(" Error de conexión con el servidor");
     }
   };
 
@@ -75,10 +75,6 @@ export default function InputRegisterEstudiante() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       /><br />
-
-      <button type="submit" className="btn primary">
-        Registrar Estudiante
-      </button>
     </form>
   );
 }

@@ -66,9 +66,6 @@ export default function InputRegisterEncargado() {
         autoComplete="new-password"
       /><br />
 
-      <button onClick={handleRegister} className="register-button">
-        Registrar
-      </button>
     </div>
   );
 }
