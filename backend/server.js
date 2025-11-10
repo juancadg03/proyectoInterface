@@ -7,7 +7,7 @@ const pool = require('./db');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // para leer JSON de React
+app.use(express.json());
 
 // Registro de usuario
 app.post('/api/register', async (req, res) => {
@@ -47,6 +47,17 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Error al hacer login' });
   }
 });
+
+app.get('/api/facultades', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT cod_fact, nomFact FROM Facultad');
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener facultades' });
+  }
+});
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server corriendo en puerto ${PORT}`));
