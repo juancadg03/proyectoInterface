@@ -8,6 +8,11 @@ import ActionButtons from "./components/buttons-login";
 import LogoBottom from "./components/logo";
 import LoginPage from "./components/loginPage"
 
+
+import DashboardProfesor from "./components/DashboardProfesor";
+import DashboardEstudiante from "./components/DashboardEstudiante";
+import DashboardEncargado from "./components/DashboardEncargado";
+
 // Componentes del registro
 import TitleRegister from "./components/title-register";
 import ButtonsRegister from "./components/buttons-register";
@@ -53,7 +58,10 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginPage />} />
-      </Routes>
+        <Route path="/dashboard-profesor" element={<DashboardProfesor />} />
+        <Route path="/dashboard-estudiante" element={<DashboardEstudiante />} />
+        <Route path="/dashboard-encargado" element={<DashboardEncargado />} />
+              </Routes>
       <LogoBottom />
     </BrowserRouter>
   );

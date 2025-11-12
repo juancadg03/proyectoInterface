@@ -9,8 +9,48 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Aquí luego haremos la conexión al backend
-    alert(`Cédula: ${cedula}\nContraseña: ${password}`);
+
+    if (!cedula || !password) {
+      alert("Por favor ingresa tu cédula y contraseña.");
+      return;
+    }
+
+    try {
+      // Petición al backend para verificar el login
+      const response = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cedula, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ok) {
+        // Guardar token y rol en localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("cedula", data.cedula);
+        localStorage.setItem("rol", data.tipo_rol);
+
+        // Alerta de éxito
+        alert(` Inicio de sesión exitoso como ${data.tipo_rol}`);
+
+        // Redirección según el rol
+        if (data.tipo_rol === "profesor") {
+          navigate("/dashboard-profesor");
+        } else if (data.tipo_rol === "estudiante") {
+          navigate("/dashboard-estudiante");
+        } else if (data.tipo_rol === "encargado") {
+          navigate("/dashboard-encargado");
+        } else {
+          navigate("/");
+        }
+      } else {
+        alert(` Error: ${data.error || "Credenciales incorrectas"}`);
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      alert(" No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
+    }
   };
 
   return (
@@ -30,7 +70,7 @@ export default function LoginPage() {
             type="password"
             placeholder="Contraseña"
             className="login-input"
-            autoComplete="new-password" 
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -39,8 +79,12 @@ export default function LoginPage() {
             Ingresar
           </button>
           <br /><br />
-          <button className="back-button" onClick={() => navigate("/")}>
-                  <IoArrowBack size={22} />
+          <button
+            className="back-button"
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            <IoArrowBack size={22} />
           </button>
         </form>
       </div>
