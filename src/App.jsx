@@ -39,7 +39,6 @@ function Register() {
         {userType === "profesor" && <InputRegisterProfesor />}
         {userType === "estudiante" && <InputRegisterEstudiante />}
         {userType === "encargado" && <InputRegisterEncargado />}
-        <ButtonsRegister />
       </div>
     </div>
   );
