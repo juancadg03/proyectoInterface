@@ -157,6 +157,18 @@ body {
   color: #000000;
 }
 
+.login-input {
+  width: 220px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  text-align: center;
+  font-weight: 600;
+  margin-top: 8px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
 .register-btn {
   background-color: #00bfff;
   color: #000;

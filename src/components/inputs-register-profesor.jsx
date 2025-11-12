@@ -51,7 +51,7 @@ export default function InputRegisterProfesor() {
         <input type="text" placeholder="Código del profesor" className="register-input" value={codigo} onChange={(e) => setCodigo(e.target.value)} /><br />
         <input type="text" placeholder="Cédula" className="register-input" value={cedula} onChange={(e) => setCedula(e.target.value)} /><br />
         <input type="text" placeholder="Nombre" className="register-input" value={nombre} onChange={(e) => setNombre(e.target.value)} /><br />
-        <input type="password" placeholder="Contraseña" className="register-input" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
+        <input type="password" placeholder="Contraseña" className="register-input" autoComplete="new-password"  value={password} onChange={(e) => setPassword(e.target.value)} /><br />
         <select className="input-select-facultad" value={facultad} onChange={(e) => setFacultad(e.target.value)}>
           <option value="">Seleccione facultad</option>
           {facultades.map((f) => (

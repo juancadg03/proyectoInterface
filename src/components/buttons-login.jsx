@@ -12,7 +12,10 @@ export default function ActionButtons() {
 
   return (
     <div>
-      <button className="btn primary">Ingresar</button><br /><br />
+      <button className="btn primary" onClick={() => navigate("/login")}>
+        Ingresar
+      </button>
+      <br /><br />
       <button className="btn secondary" onClick={handleRegister}>
         Registrarse
       </button>

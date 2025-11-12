@@ -6,6 +6,7 @@ import TitleSection from "./components/title-login";
 import UserSelect from "./components/selectuser-login";
 import ActionButtons from "./components/buttons-login";
 import LogoBottom from "./components/logo";
+import LoginPage from "./components/loginPage"
 
 // Componentes del registro
 import TitleRegister from "./components/title-register";
@@ -51,6 +52,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
       <LogoBottom />
     </BrowserRouter>

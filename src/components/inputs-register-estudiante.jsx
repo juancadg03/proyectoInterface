@@ -44,7 +44,7 @@ export default function InputRegisterEstudiante() {
         <input type="text" placeholder="Cédula del estudiante" className="register-input" value={cedula} onChange={(e) => setCedula(e.target.value)} /><br />
         <input type="text" placeholder="Nombre" className="register-input" value={nombre} onChange={(e) => setNombre(e.target.value)} /><br />
         <input type="number" placeholder="Semestre" className="register-input" value={semestre} onChange={(e) => setSemestre(e.target.value)} /><br />
-        <input type="password" placeholder="Contraseña" className="register-input" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
+        <input type="password" placeholder="Contraseña" className="register-input" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
       </div>
       <ButtonsRegister onRegister={handleSubmit} />
     </>

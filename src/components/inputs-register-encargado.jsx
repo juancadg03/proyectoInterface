@@ -44,7 +44,7 @@ export default function InputRegisterEncargado() {
       <div className="inputs">
         <input type="text" placeholder="Cédula del encargado" className="register-input" value={cedula} onChange={(e) => setCedula(e.target.value)} /><br />
         <input type="text" placeholder="Nombre del encargado" className="register-input" value={nombre} onChange={(e) => setNombre(e.target.value)} /><br />
-        <input type="password" placeholder="Contraseña" className="register-input" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
+        <input type="password" placeholder="Contraseña" className="register-input" autoComplete="new-password"  value={password} onChange={(e) => setPassword(e.target.value)} /><br />
       </div>
       <ButtonsRegister onRegister={handleRegister} />
     </>
