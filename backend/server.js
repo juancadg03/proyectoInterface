@@ -9,20 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Mapeo de roles desde el frontend al CHAR(1) de la BD
-const rolesMap = {
-  profesor: "P",
-  estudiante: "E",
-  encargado: "C",
-};
-
-// Utilidad para traducir rol corto a texto (para devolver al frontend si quieres)
-const rolesReverseMap = {
-  P: "profesor",
-  E: "estudiante",
-  C: "encargado",
-};
-
 // ---------------------------
 //  GET: Facultades
 // ---------------------------
@@ -61,7 +47,7 @@ app.post("/api/register", async (req, res) => {
         .json({ error: "Faltan datos obligatorios (cedula, password, tipo_rol)" });
     }
 
-    const tipoRolChar = rolesMap[tipo_rol];
+    const tipoRolChar = tipo_rol
     if (!tipoRolChar) {
       return res.status(400).json({ error: "tipo_rol inválido" });
     }
@@ -101,7 +87,7 @@ app.post("/api/register", async (req, res) => {
       // Inserción en la tabla Usuario
       await connection.execute(
         "INSERT INTO Usuario (cedula_usuario, password_hash, tipo_rol) VALUES (?, ?, ?)",
-        [cedula, hashedPassword, tipo_rol[0].toUpperCase()]
+        [cedula, hashedPassword, tipo_rol]
       );
       
       // Insertar en tabla según rol
@@ -188,7 +174,7 @@ app.post("/api/login", async (req, res) => {
         .json({ error: "Contraseña incorrecta" });
     }
 
-    const tipo_rol = rolesReverseMap[user.tipo_rol] || "desconocido";
+    const tipo_rol = user.tipo_rol || "desconocido";
 
     const token = jwt.sign(
       {

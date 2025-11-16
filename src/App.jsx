@@ -13,13 +13,16 @@ import DashboardProfesor from "./components/DashboardProfesor";
 import DashboardEstudiante from "./components/DashboardEstudiante";
 import DashboardEncargado from "./components/DashboardEncargado";
 
+
 // Componentes del registro
 import TitleRegister from "./components/title-register";
-import ButtonsRegister from "./components/buttons-register";
 import InputRegisterProfesor from "./components/inputs-register-profesor";
 import InputRegisterEstudiante from "./components/inputs-register-estudiante";
 import InputRegisterEncargado from "./components/inputs-register-encargado";
 
+// Componentes de Encargados
+import GestionPrestamos from "./components/GestionPrestamos";
+import EstadisticasEncargado from "./components/EstadisticasEncargado";
 // ---- LOGIN ----
 function Login() {
   return (
@@ -50,6 +53,7 @@ function Register() {
   );
 }
 
+
 // ---- APP PRINCIPAL ----
 function App() {
   return (
@@ -61,6 +65,9 @@ function App() {
         <Route path="/dashboard-profesor" element={<DashboardProfesor />} />
         <Route path="/dashboard-estudiante" element={<DashboardEstudiante />} />
         <Route path="/dashboard-encargado" element={<DashboardEncargado />} />
+        <Route path="/dashboard-encargado" element={<DashboardEncargado />} />
+        <Route path="/gestion-prestamos" element={<GestionPrestamos />} />
+        <Route path="/estadisticas" element={<EstadisticasEncargado />} />
               </Routes>
       <LogoBottom />
     </BrowserRouter>
