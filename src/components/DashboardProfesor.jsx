@@ -30,7 +30,7 @@ export default function DashboardProfesor() {
 
           <button
             className="btn secondary"
-            onClick={() => navigate("/evaluar")}
+            onClick={() => navigate("/evaluarExperiencia")}
             style={{
               padding: "12px",
               fontSize: "16px",

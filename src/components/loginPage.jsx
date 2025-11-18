@@ -16,7 +16,6 @@ export default function LoginPage() {
     }
 
     try {
-      // Petición al backend para verificar el login
       const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,31 +24,46 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      if (response.ok && data.ok) {
-        // Guardar token y rol en localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("cedula", data.cedula);
-        localStorage.setItem("rol", data.tipo_rol);
+      if (!response.ok || !data.ok) {
+        alert(`Error: ${data.error || "Credenciales incorrectas"}`);
+        return;
+      }
 
-        // Alerta de éxito
-        alert(` Inicio de sesión exitoso como ${data.tipo_rol}`);
+      // Guardar datos base
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("cedula", data.cedula);
+      localStorage.setItem("rol", data.tipo_rol);
 
-        // Redirección según el rol
-        if (data.tipo_rol === "profesor") {
-          navigate("/dashboard-profesor");
-        } else if (data.tipo_rol === "estudiante") {
-          navigate("/dashboard-estudiante");
-        } else if (data.tipo_rol === "encargado") {
-          navigate("/dashboard-encargado");
-        } else {
-          navigate("/");
-        }
+      // Guardar nombre (CORRECCIÓN)
+      if (data.nombre) {
+        localStorage.setItem("nombre", data.nombre);
+      }
+
+      // Guardar codProf si viene
+      if (data.codProf) {
+        localStorage.setItem("codProf", data.codProf);
+      }
+
+      // Guardar cedEncargado si viene
+      if (data.cedEncargado) {
+        localStorage.setItem("cedEncargado", data.cedEncargado);
+      }
+
+      alert(`Inicio de sesión exitoso como ${data.tipo_rol}`);
+
+      // Redirección
+      if (data.tipo_rol === "profesor") {
+        navigate("/dashboard-profesor");
+      } else if (data.tipo_rol === "estudiante") {
+        navigate("/dashboard-estudiante");
+      } else if (data.tipo_rol === "encargado") {
+        navigate("/dashboard-encargado");
       } else {
-        alert(` Error: ${data.error || "Credenciales incorrectas"}`);
+        navigate("/");
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      alert(" No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
+      alert("No se pudo conectar con el servidor.");
     }
   };
 
@@ -70,7 +84,6 @@ export default function LoginPage() {
             type="password"
             placeholder="Contraseña"
             className="login-input"
-            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -80,8 +93,8 @@ export default function LoginPage() {
           </button>
           <br /><br />
           <button
-            className="back-button"
             type="button"
+            className="back-button"
             onClick={() => navigate("/")}
           >
             <IoArrowBack size={22} />

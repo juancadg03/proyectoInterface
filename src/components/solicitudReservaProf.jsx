@@ -9,6 +9,7 @@ export default function SolicitudReservaProfesor() {
   const [juego, setJuego] = useState(null);
   const [fechaHora, setFechaHora] = useState("");
   const [tiempoDisponible, setTiempoDisponible] = useState("");
+  
 
   // Cargar un solo juego
   const cargarJuego = async () => {

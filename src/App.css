@@ -334,3 +334,152 @@ body {
 .gp-btn-secondary:hover {
   background-color: #e5eeff;
 }
+
+/* ===========================
+   CONTENEDOR PRINCIPAL
+=========================== */
+.reservas-wrapper {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #14003a, #1c0063);
+  overflow-y: auto;
+  padding: 50px;
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+/* ===========================
+   TÍTULO PRINCIPAL
+=========================== */
+.reservas-title {
+  text-align: center;
+  font-size: 36px;
+  color: #7df9ff;
+  letter-spacing: 1px;
+  margin-bottom: 40px;
+}
+
+/* ===========================
+   TARJETAS DE SECCIÓN
+=========================== */
+.card-glass {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.card-white {
+  background: rgba(255, 255, 255, 0.85);
+  color: #222;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===========================
+   INPUTS
+=========================== */
+.input-glass {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.input-glass::placeholder {
+  color: #d0d0d0;
+}
+
+/* ===========================
+   BOTONES
+=========================== */
+.btn-primary {
+  background: #7df9ff;
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #b6fbff;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 10px 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ===========================
+   BOTÓN FLOTANTE VOLVER
+=========================== */
+.back-btn {
+  position: fixed;
+  top: 30px;
+  left: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ===========================
+   SECCIONES EN FILA
+=========================== */
+.reservas-grid {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ===========================
+   TARJETA PARA EDICIÓN
+=========================== */
+.card-edit {
+  margin-top: 25px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 14px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ===========================
+   TÍTULOS DE SECCIÓN
+=========================== */
+.section-title {
+  color: #7df9ff;
+  margin-bottom: 10px;
+}

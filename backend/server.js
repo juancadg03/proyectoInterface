@@ -589,12 +589,292 @@ app.get("/api/juegos/:id", async (req, res) => {
   }
 });
 
+// =======================================================
+// POST: Evaluación (CORREGIDO)
+// =======================================================
+app.post("/api/evaluar", async (req, res) => {
+  try {
+    const { cod_Expe, cedEvaluador, ranking, rol } = req.body;
 
-// ---------------------------
-//  SERVIDOR
-// ---------------------------
+    console.log("BODY RECIBIDO EN /api/evaluar:", req.body);
+
+    // Validación básica de campos
+    if (!cod_Expe || !cedEvaluador || !ranking || !rol) {
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    // ===============================
+    // 1. OBTENER NOMBRE SEGÚN ROL
+    // ===============================
+    let nomEvaluador = null;
+
+    if (rol === "profesor") {
+      const [[row]] = await pool.execute(
+        "SELECT nombreProf AS nombre FROM Profesor WHERE cedula_prof = ?",
+        [cedEvaluador]
+      );
+      if (row) nomEvaluador = row.nombre;
+    } else if (rol === "estudiante") {
+      const [[row]] = await pool.execute(
+        "SELECT nombreEst AS nombre FROM Estudiante WHERE cedEstud = ?",
+        [cedEvaluador]
+      );
+      if (row) nomEvaluador = row.nombre;
+    } else if (rol === "encargado") {
+      const [[row]] = await pool.execute(
+        "SELECT nomEncargado AS nombre FROM Encargado WHERE cedEncargado = ?",
+        [cedEvaluador]
+      );
+      if (row) nomEvaluador = row.nombre;
+    }
+
+    if (!nomEvaluador) {
+      return res.status(400).json({
+        error: "No se encontró el nombre del evaluador para esa cédula y rol",
+      });
+    }
+
+    // ===============================
+    // 2. VERIFICAR EXPERIENCIA
+    // ===============================
+    const [check] = await pool.execute(
+      "SELECT cod_evalu FROM Experiencia WHERE cod_Expe = ?",
+      [cod_Expe]
+    );
+
+    if (check.length === 0) {
+      return res.status(404).json({ error: "Experiencia no encontrada" });
+    }
+
+    if (check[0].cod_evalu !== null) {
+      return res
+        .status(400)
+        .json({ error: "Esta experiencia ya fue evaluada" });
+    }
+
+    // ===============================
+    // 3. GUARDAR EVALUACIÓN Y ACTUALIZAR EXPERIENCIA
+    // ===============================
+    const [[maxEval]] = await pool.execute(
+      "SELECT COALESCE(MAX(cod_Eval), 0) AS maximo FROM Evaluaciones"
+    );
+    const cod_Eval = maxEval.maximo + 1;
+
+    await pool.execute(
+      `INSERT INTO Evaluaciones (cod_Eval, cedEvaluador, nomEvaluador, ranking)
+       VALUES (?, ?, ?, ?)`,
+      [cod_Eval, cedEvaluador, nomEvaluador, ranking]
+    );
+
+    await pool.execute(
+      `UPDATE Experiencia 
+       SET cod_evalu = ? 
+       WHERE cod_Expe = ?`,
+      [cod_Eval, cod_Expe]
+    );
+
+    return res.json({ ok: true, cod_Eval });
+
+  } catch (err) {
+    console.error("ERROR /api/evaluar:", err);
+    return res.status(500).json({ error: "Error interno" });
+  }
+});
+
+
+
+// =======================================================
+// GET: Experiencias evaluables (profesor o estudiante)
+// =======================================================
+app.get("/api/experiencias/evaluables/:cedula/:rol", async (req, res) => {
+  const { cedula, rol } = req.params;
+
+  try {
+    let query = "";
+    let params = [];
+
+    if (rol === "profesor") {
+      const [[prof]] = await pool.execute(
+        "SELECT cod_prof FROM Profesor WHERE cedula_prof = ?",
+        [cedula]
+      );
+
+      if (!prof) {
+        return res.json([]);
+      }
+
+      query = `
+        SELECT E.cod_Expe, E.fechaHora, J.nomJuego
+        FROM Experiencia E
+        JOIN Juego J ON J.codJuego = E.codJuego
+        WHERE E.cod_Prof = ?
+        AND E.cod_evalu IS NULL
+        ORDER BY E.fechaHora DESC
+      `;
+
+      params = [prof.cod_prof];
+    }
+
+    if (rol === "estudiante") {
+      const [[estu]] = await pool.execute(
+        "SELECT cod_Estu FROM Estudiante WHERE cedEstud = ?",
+        [cedula]
+      );
+
+      if (!estu) {
+        return res.json([]);
+      }
+
+      query = `
+        SELECT E.cod_Expe, E.fechaHora, J.nomJuego
+        FROM Experiencia E
+        JOIN Juego J ON J.codJuego = E.codJuego
+        WHERE E.cod_Estud = ?
+        AND E.cod_evalu IS NULL
+        ORDER BY E.fechaHora DESC
+      `;
+
+      params = [estu.cod_Estu];
+    }
+
+    const [rows] = await pool.execute(query, params);
+    return res.json(rows);
+
+  } catch (err) {
+    console.error("Error obteniendo evaluables:", err);
+    res.status(500).json({ error: "Error interno" });
+  }
+});
+
+// -------------------------------
+//  GET ESTADISTICAS POR JUEGO
+// -------------------------------
+app.get("/api/estadisticas/:codJuego", async (req, res) => {
+  const { codJuego } = req.params;
+
+  try {
+    // 1. Obtener ranking promedio del juego
+    const [rankingRows] = await pool.execute(
+      `SELECT AVG(eva.ranking) AS rankingPromedio
+       FROM Experiencia exp
+       JOIN Evaluaciones eva ON eva.cod_Eval = exp.cod_evalu
+       WHERE exp.codJuego = ? AND exp.cod_evalu IS NOT NULL`,
+      [codJuego]
+    );
+
+    // 2. Contar cuántas experiencias ha tenido ese juego
+    const [usosRows] = await pool.execute(
+      `SELECT COUNT(*) AS cntUsos
+       FROM Experiencia
+       WHERE codJuego = ?`,
+      [codJuego]
+    );
+
+    const rankingPromedio = rankingRows[0].rankingPromedio || 0;
+    const cntUsos = usosRows[0].cntUsos || 0;
+
+    // 3. Obtener nombre del juego
+    const [juegoRows] = await pool.execute(
+      `SELECT nomJuego FROM Juego WHERE codJuego = ?`,
+      [codJuego]
+    );
+
+    if (juegoRows.length === 0) {
+      return res.status(404).json({ error: "Juego no encontrado" });
+    }
+
+    res.json({
+      codJuego,
+      nomJuego: juegoRows[0].nomJuego,
+      rankingPromedio,
+      cntUsos
+    });
+
+  } catch (err) {
+    console.error("ERROR /api/estadisticas:", err);
+    res.status(500).json({ error: "Error interno" });
+  }
+});
+
+app.get("/api/experiencias/disponibles", async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT E.cod_Expe, E.fechaHora, J.nomJuego
+       FROM Experiencia E
+       JOIN Juego J ON J.codJuego = E.codJuego
+       WHERE E.cod_Estud IS NULL AND E.reservado = 1`
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo experiencias" });
+  }
+});
+
+app.post("/api/estudiante/inscribirse", async (req, res) => {
+  try {
+    const { cod_Expe, cedula } = req.body;
+
+    if (!cod_Expe || !cedula) {
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    // Obtener cod_Estu
+    const [[estu]] = await pool.execute(
+      "SELECT cod_Estu FROM Estudiante WHERE cedEstud = ?",
+      [cedula]
+    );
+
+    if (!estu) {
+      return res.status(400).json({ error: "No eres estudiante válido" });
+    }
+
+    // Duplicar la experiencia original
+    const [[orig]] = await pool.execute(
+      "SELECT * FROM Experiencia WHERE cod_Expe = ?",
+      [cod_Expe]
+    );
+
+    if (!orig) {
+      return res.status(404).json({ error: "Experiencia no encontrada" });
+    }
+
+    const [[mx]] = await pool.execute(
+      "SELECT COALESCE(MAX(cod_Expe), 7000) AS maximo FROM Experiencia"
+    );
+
+    const nuevoCod = mx.maximo + 1;
+
+    await pool.execute(
+      `INSERT INTO Experiencia 
+       (cod_Expe, fechaHora, horaFin, tiempoDisponible, cod_Prof, cod_Estud, codJuego, CedulaEncarg, reservado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      [
+        nuevoCod,
+        orig.fechaHora,
+        orig.horaFin,
+        orig.tiempoDisponible,
+        orig.cod_Prof,
+        estu.cod_Estu,
+        orig.codJuego,
+        orig.CedulaEncarg,
+      ]
+    );
+
+    res.json({ ok: true, cod_Expe: nuevoCod });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al inscribirse" });
+  }
+});
+
+
+// =======================================================
+// SERVIDOR
+// =======================================================
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server corriendo en puerto ${PORT}`);
 });
-

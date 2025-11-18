@@ -29,7 +29,10 @@ import EliminarJuego from "./components/eliminarJuego";
 //Componentes profesor
 import JuegosProfesor from "./components/juegosProfesor";
 import SolicitudReservaProfesor from "./components/solicitudReservaProf";
-
+import EvaluarExperiencia from "./components/evaluarExperiencia";
+import JuegosEstudiante from "./components/juegosEstudiantes";
+import JuegoEstudianteDetalle from "./components/juegoEstudiantedet";
+import InscribirseExperiencia from "./components/inscribirse";
 // ---- LOGIN ----
 function Login() {
   return (
@@ -78,7 +81,11 @@ function App() {
         <Route path="/anadirJuego" element={<AnadirJuego/>} />
         <Route path="/eliminarJuego" element={<EliminarJuego/>} />
         <Route path="/juegosProfesor" element={<JuegosProfesor/>} />
+        <Route path="/juegosEstudiantes" element={<JuegosEstudiante/>} />
         <Route path="/profesor/reservar/:codJuego" element={<SolicitudReservaProfesor />}/>
+        <Route path="/evaluarExperiencia" element={<EvaluarExperiencia/>} />
+        <Route path="/estudiante/juego/:codJuego" element={<JuegoEstudianteDetalle />} />
+        <Route path="/estudiante/inscribirse" element={<InscribirseExperiencia />} />
 
               </Routes>
       <LogoBottom />
