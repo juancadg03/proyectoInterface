@@ -515,6 +515,80 @@ app.delete("/api/encargado/cancelar-reserva/:codExpe", async (req, res) => {
     return res.status(500).json({ ok: false, message: "Error al cancelar la reserva" });
   }
 });
+app.post("/api/profesor/solicitar-reserva", async (req, res) => {
+  try {
+    const { codProf, codJuego, fechaHora, tiempoDisponible } = req.body;
+
+    if (!codProf || !codJuego || !fechaHora || !tiempoDisponible) {
+      return res.json({ ok: false, message: "Datos incompletos" });
+    }
+
+    await pool.execute(`
+      INSERT INTO SolicitudesReserva (cod_Prof, codJuego, fechaHora, tiempoDisponible)
+      VALUES (?, ?, ?, ?)
+    `, [codProf, codJuego, fechaHora, tiempoDisponible]);
+
+    return res.json({ ok: true });
+
+  } catch (err) {
+    console.error(err);
+    return res.json({ ok: false, message: "Error al enviar solicitud" });
+  }
+});
+app.post("/api/encargado/aceptar-solicitud/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // 1. Obtener solicitud
+  const [rows] = await pool.execute("SELECT * FROM SolicitudesReserva WHERE id = ?", [id]);
+
+  if (rows.length === 0) return res.json({ ok: false, message: "No existe solicitud" });
+
+  const sol = rows[0];
+
+  // 2. Crear reserva en Experiencia
+  const [maxRows] = await pool.execute(
+    "SELECT COALESCE(MAX(cod_Expe),7000) AS maxCode FROM Experiencia"
+  );
+  const nextCode = maxRows[0].maxCode + 1;
+
+  await pool.execute(`
+    INSERT INTO Experiencia (cod_Expe, fechaHora, tiempoDisponible, cod_Prof, cod_Estud, codJuego, CedulaEncarg, reservado)
+    VALUES (?, ?, ?, ?, NULL, ?, ?, 1)
+  `, [nextCode, sol.fechaHora, sol.tiempoDisponible, sol.cod_Prof, sol.codJuego, req.body.cedEncargado]);
+
+  // 3. Cambiar estado
+  await pool.execute("UPDATE SolicitudesReserva SET estado='aceptada' WHERE id=?", [id]);
+
+  res.json({ ok: true });
+});
+app.post("/api/encargado/rechazar-solicitud/:id", async (req, res) => {
+  await pool.execute(
+    "UPDATE SolicitudesReserva SET estado='rechazada' WHERE id=?",
+    [req.params.id]
+  );
+  res.json({ ok: true });
+});
+
+app.get("/api/juegos/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await pool.execute(
+      "SELECT * FROM Juego WHERE codJuego = ?",
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ ok: false, message: "Juego no encontrado" });
+    }
+
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error("Error cargando juego:", err);
+    return res.status(500).json({ ok: false, message: "Error del servidor" });
+  }
+});
+
 
 // ---------------------------
 //  SERVIDOR
@@ -523,3 +597,4 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server corriendo en puerto ${PORT}`);
 });
+

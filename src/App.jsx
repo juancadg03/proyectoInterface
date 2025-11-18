@@ -25,6 +25,11 @@ import GestionPrestamos from "./components/GestionPrestamos";
 import EstadisticasEncargado from "./components/EstadisticasEncargado";
 import AnadirJuego from "./components/anadirJuego";
 import EliminarJuego from "./components/eliminarJuego";
+
+//Componentes profesor
+import JuegosProfesor from "./components/juegosProfesor";
+import SolicitudReservaProfesor from "./components/solicitudReservaProf";
+
 // ---- LOGIN ----
 function Login() {
   return (
@@ -72,6 +77,9 @@ function App() {
         <Route path="/estadisticas" element={<EstadisticasEncargado />} />
         <Route path="/anadirJuego" element={<AnadirJuego/>} />
         <Route path="/eliminarJuego" element={<EliminarJuego/>} />
+        <Route path="/juegosProfesor" element={<JuegosProfesor/>} />
+        <Route path="/profesor/reservar/:codJuego" element={<SolicitudReservaProfesor />}/>
+
               </Routes>
       <LogoBottom />
     </BrowserRouter>
