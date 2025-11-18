@@ -17,7 +17,7 @@ export default function DashboardEncargado() {
         </button>
 
         {/* Título */}
-        <h2 className="title">
+        <h2 className="title" style={{marginBottom: "-40px"}}>
           Seleccione su gestión
         </h2>
 
@@ -37,6 +37,26 @@ export default function DashboardEncargado() {
         >
           Estadísticas
         </button>
+        <br></br>
+        {/* Botón añadir juegos */}
+        <button
+          className="btn primary"
+          style={{marginTop: "2px"}}
+          onClick={() => navigate("/anadirJuego")}
+        >
+          Añadir nuevos Juegos
+        </button>
+        <br></br>
+
+        {/* Botón Eliminar juegos*/}
+        <button
+          className="btn secondary"
+          style={{marginTop: "2px"}}
+          onClick={() => navigate("/eliminarJuego")}
+        >
+          Eliminar Juegos
+        </button>
+        
       </div>
     </div>
   );

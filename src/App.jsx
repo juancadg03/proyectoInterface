@@ -23,6 +23,8 @@ import InputRegisterEncargado from "./components/inputs-register-encargado";
 // Componentes de Encargados
 import GestionPrestamos from "./components/GestionPrestamos";
 import EstadisticasEncargado from "./components/EstadisticasEncargado";
+import AnadirJuego from "./components/anadirJuego";
+import EliminarJuego from "./components/eliminarJuego";
 // ---- LOGIN ----
 function Login() {
   return (
@@ -68,6 +70,8 @@ function App() {
         <Route path="/dashboard-encargado" element={<DashboardEncargado />} />
         <Route path="/gestion-prestamos" element={<GestionPrestamos />} />
         <Route path="/estadisticas" element={<EstadisticasEncargado />} />
+        <Route path="/anadirJuego" element={<AnadirJuego/>} />
+        <Route path="/eliminarJuego" element={<EliminarJuego/>} />
               </Routes>
       <LogoBottom />
     </BrowserRouter>

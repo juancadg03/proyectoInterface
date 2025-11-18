@@ -25,7 +25,20 @@ body {
   gap: 15px;
   text-align: center;
 }
-
+.crear_horarios-card {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 15px;
+  text-align: center;
+}
+.horarios-card {
+  display: flex;
+  flex-direction: column;
+  align-items: right;
+  gap: 15px;
+  text-align: center;
+}
 .title {
   color: #8bd6ff;
   font-size: 3rem;
@@ -194,4 +207,130 @@ body {
   color: white;
   font-size: 24px;
   cursor: pointer;
+}
+
+/* Contenedor que agrupa las dos columnas */
+.gestion-container {
+  display: flex;
+  gap: 40px;
+  width: 90%;
+  max-width: 1200px;
+}
+
+/* IZQUIERDA */
+.crear-columna {
+  width: 40%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 10px;
+  position: relative;
+}
+
+/* DERECHA */
+.lista-columna {
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 10px;
+  position: relative;
+}
+
+/* SCROLL INTERNO */
+.lista-scroll {
+  height: 450px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+/* ITEMS DE HORARIOS */
+.horario-item {
+  background: white;
+  color: black;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+/* ============================
+   CSS EXCLUSIVO GestiónPrestamos
+   ============================ */
+
+.gp-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #18004d;
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+.gp-container {
+  width: 90%;
+  max-width: 1300px;
+  display: flex;
+  gap: 40px;
+}
+
+/* COLUMNA IZQUIERDA */
+.gp-left {
+  width: 40%;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* COLUMNA DERECHA */
+.gp-right {
+  width: 60%;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* LISTA DE RESERVAS */
+.gp-reservas-list {
+  max-height: none;      /* permite crecer */
+  overflow-y: visible;   /* deja que la página scrollee */
+}
+
+.gp-reserva-card {
+  background: white;
+  color: black;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+/* Botones */
+.gp-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.gp-btn-primary {
+  background-color: #0095ff;
+  color: white;
+}
+
+.gp-btn-primary:hover {
+  background-color: #0077cc;
+}
+
+.gp-btn-secondary {
+  background-color: white;
+  color: #0095ff;
+}
+
+.gp-btn-secondary:hover {
+  background-color: #e5eeff;
 }
