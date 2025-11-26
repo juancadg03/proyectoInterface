@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -266,55 +267,44 @@ app.post("/api/juegos", async (req, res) => {
   }
 });
 
+//  GET: Estadísticas por Experiencia
 // ---------------------------
-//  DELETE: Eliminar juego
-// ---------------------------
-app.delete("/api/juegos/:codJuego", async (req, res) => {
+app.get("/api/estadisticas/:codExpe", async (req, res) => {
+  const { codExpe } = req.params;
+
   try {
-    const { codJuego } = req.params;
-
-    const [result] = await pool.execute(
-      "DELETE FROM Juego WHERE codJuego = ?",
-      [codJuego]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Juego no encontrado" });
-    }
-
-    res.json({ ok: true, message: "Juego eliminado exitosamente" });
-  } catch (err) {
-    console.error("Error al eliminar juego:", err);
-    res.status(500).json({ error: "Error al eliminar juego" });
-  }
-});
-
-// ---------------------------
-//  GET: Estadísticas de un juego
-// ---------------------------
-app.get("/api/estadisticas/:codJuego", async (req, res) => {
-  try {
-    const { codJuego } = req.params;
-
-    const [rows] = await pool.execute(
+    // 1. Obtener la experiencia y sus evaluaciones
+    const [experienciaRows] = await pool.execute(
       `SELECT 
-        j.codJuego,
+        e.cod_Expe,
+        e.fechaHora,
         j.nomJuego,
-        COALESCE(AVG(e.ranking), 0) as rankingPromedio,
-        COUNT(DISTINCT exp.cod_Expe) as cntUsos
-      FROM Juego j
-      LEFT JOIN Experiencia exp ON j.codJuego = exp.codJuego
-      LEFT JOIN Evaluaciones e ON exp.cod_evalu = e.cod_Eval
-      WHERE j.codJuego = ?
-      GROUP BY j.codJuego, j.nomJuego`,
-      [codJuego]
+        AVG(ev.ranking) AS rankingPromedio,
+        COUNT(e.cod_Expe) AS cntUsos
+      FROM Experiencia e
+      JOIN Juego j ON e.codJuego = j.codJuego
+      LEFT JOIN Evaluaciones ev ON e.cod_evalu = ev.cod_Eval
+      WHERE e.cod_Expe = ? 
+      GROUP BY e.cod_Expe, j.nomJuego, e.fechaHora`,
+      [codExpe]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Juego no encontrado" });
+    if (experienciaRows.length === 0) {
+      return res.status(404).json({ error: "Experiencia no encontrada" });
     }
 
-    res.json(rows[0]);
+    // 2. Calcular el ranking promedio y la cantidad de usos
+    const rankingPromedio = experienciaRows[0].rankingPromedio || 0;
+    const cntUsos = experienciaRows[0].cntUsos || 0;
+    
+    // 3. Devolver estadísticas de la experiencia
+    res.json({
+      codExpe,
+      nomJuego: experienciaRows[0].nomJuego,
+      rankingPromedio: rankingPromedio.toFixed(2),
+      cntUsos
+    });
+
   } catch (err) {
     console.error("Error al obtener estadísticas:", err);
     res.status(500).json({ error: "Error al obtener estadísticas" });
@@ -515,6 +505,9 @@ app.delete("/api/encargado/cancelar-reserva/:codExpe", async (req, res) => {
     return res.status(500).json({ ok: false, message: "Error al cancelar la reserva" });
   }
 });
+
+
+/**SOLICITUD PROFESOR  */
 app.post("/api/profesor/solicitar-reserva", async (req, res) => {
   try {
     const { codProf, codJuego, fechaHora, tiempoDisponible } = req.body;
@@ -524,8 +517,8 @@ app.post("/api/profesor/solicitar-reserva", async (req, res) => {
     }
 
     await pool.execute(`
-      INSERT INTO SolicitudesReserva (cod_Prof, codJuego, fechaHora, tiempoDisponible)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO SolicitudesReserva (cod_Prof, codJuego, fechaHora, tiempoDisponible, estado)
+      VALUES (?, ?, ?, ?, 'pendiente')
     `, [codProf, codJuego, fechaHora, tiempoDisponible]);
 
     return res.json({ ok: true });
@@ -535,6 +528,10 @@ app.post("/api/profesor/solicitar-reserva", async (req, res) => {
     return res.json({ ok: false, message: "Error al enviar solicitud" });
   }
 });
+
+
+/**ACEPTAR SOLICITUD DE RESERVA */
+
 app.post("/api/encargado/aceptar-solicitud/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -561,13 +558,19 @@ app.post("/api/encargado/aceptar-solicitud/:id", async (req, res) => {
 
   res.json({ ok: true });
 });
+
+
+
+/**RECHAZAR SOLICITUD ENCARGADO */
 app.post("/api/encargado/rechazar-solicitud/:id", async (req, res) => {
   await pool.execute(
-    "UPDATE SolicitudesReserva SET estado='rechazada' WHERE id=?",
+    `UPDATE SolicitudesReserva SET estado = 'rechazada' WHERE id = ?`,
     [req.params.id]
   );
   res.json({ ok: true });
 });
+
+/*BUSCAR JUEGOS ESTUDIANTES */
 
 app.get("/api/juegos/:id", async (req, res) => {
   try {
@@ -646,7 +649,7 @@ app.post("/api/evaluar", async (req, res) => {
       return res.status(404).json({ error: "Experiencia no encontrada" });
     }
 
-    if (check[0].cod_evalu !== null) {
+    if (check[0].cod_Evalu !== null) {
       return res
         .status(400)
         .json({ error: "Esta experiencia ya fue evaluada" });
@@ -668,7 +671,7 @@ app.post("/api/evaluar", async (req, res) => {
 
     await pool.execute(
       `UPDATE Experiencia 
-       SET cod_evalu = ? 
+       SET cod_Evalu = ? 
        WHERE cod_Expe = ?`,
       [cod_Eval, cod_Expe]
     );
@@ -746,55 +749,7 @@ app.get("/api/experiencias/evaluables/:cedula/:rol", async (req, res) => {
   }
 });
 
-// -------------------------------
-//  GET ESTADISTICAS POR JUEGO
-// -------------------------------
-app.get("/api/estadisticas/:codJuego", async (req, res) => {
-  const { codJuego } = req.params;
-
-  try {
-    // 1. Obtener ranking promedio del juego
-    const [rankingRows] = await pool.execute(
-      `SELECT AVG(eva.ranking) AS rankingPromedio
-       FROM Experiencia exp
-       JOIN Evaluaciones eva ON eva.cod_Eval = exp.cod_evalu
-       WHERE exp.codJuego = ? AND exp.cod_evalu IS NOT NULL`,
-      [codJuego]
-    );
-
-    // 2. Contar cuántas experiencias ha tenido ese juego
-    const [usosRows] = await pool.execute(
-      `SELECT COUNT(*) AS cntUsos
-       FROM Experiencia
-       WHERE codJuego = ?`,
-      [codJuego]
-    );
-
-    const rankingPromedio = rankingRows[0].rankingPromedio || 0;
-    const cntUsos = usosRows[0].cntUsos || 0;
-
-    // 3. Obtener nombre del juego
-    const [juegoRows] = await pool.execute(
-      `SELECT nomJuego FROM Juego WHERE codJuego = ?`,
-      [codJuego]
-    );
-
-    if (juegoRows.length === 0) {
-      return res.status(404).json({ error: "Juego no encontrado" });
-    }
-
-    res.json({
-      codJuego,
-      nomJuego: juegoRows[0].nomJuego,
-      rankingPromedio,
-      cntUsos
-    });
-
-  } catch (err) {
-    console.error("ERROR /api/estadisticas:", err);
-    res.status(500).json({ error: "Error interno" });
-  }
-});
+/** */
 
 app.get("/api/experiencias/disponibles", async (req, res) => {
   try {
@@ -812,6 +767,8 @@ app.get("/api/experiencias/disponibles", async (req, res) => {
   }
 });
 
+
+/**I */
 app.post("/api/estudiante/inscribirse", async (req, res) => {
   try {
     const { cod_Expe, cedula } = req.body;
@@ -870,6 +827,22 @@ app.post("/api/estudiante/inscribirse", async (req, res) => {
   }
 });
 
+/** ENCARGADO – Obtener solicitudes pendientes */
+app.get("/api/encargado/solicitudes", async (req, res) => {
+  try {
+    const [rows] = await pool.execute(`
+      SELECT id, cod_Prof, codJuego, fechaHora, tiempoDisponible, estado
+      FROM SolicitudesReserva
+      WHERE estado = 'pendiente'
+      ORDER BY fechaHora DESC
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error en GET /encargado/solicitudes:", err);
+    res.status(500).json({ ok: false, message: "Error obteniendo solicitudes" });
+  }
+});
 
 // =======================================================
 // SERVIDOR
@@ -878,3 +851,4 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server corriendo en puerto ${PORT}`);
 });
+ 

@@ -42,7 +42,7 @@ export default function SolicitudReservaProfesor() {
 
     if (data.ok) {
       alert("Solicitud enviada. El encargado debe aceptarla.");
-      navigate("/profesor/juegos");
+      navigate("/juegosProfesor");
     } else {
       alert(data.message);
     }

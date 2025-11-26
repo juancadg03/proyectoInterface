@@ -4,24 +4,24 @@ import { IoArrowBack, IoStatsChart, IoStar, IoPlay } from "react-icons/io5";
 
 export default function Estadisticas() {
   const navigate = useNavigate();
-  const [juegos, setJuegos] = useState([]);
+  const [experiencias, setExperiencias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: "", type: "" });
-  const [selectedJuego, setSelectedJuego] = useState(null);
+  const [selectedExperiencia, setSelectedExperiencia] = useState(null);
   const [estadisticas, setEstadisticas] = useState(null);
 
   useEffect(() => {
-    fetchJuegos();
+    fetchExperiencias();
   }, []);
 
-  const fetchJuegos = async () => {
+  const fetchExperiencias = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/juegos");
+      const response = await fetch("http://localhost:4000/api/experiencias/disponibles");
       if (response.ok) {
         const data = await response.json();
-        setJuegos(data);
+        setExperiencias(data);
       } else {
-        setMessage({ text: "Error al cargar los juegos", type: "error" });
+        setMessage({ text: "Error al cargar las experiencias", type: "error" });
       }
     } catch (error) {
       setMessage({ text: "Error de conexión", type: "error" });
@@ -30,13 +30,13 @@ export default function Estadisticas() {
     }
   };
 
-  const handleSelectJuego = async (codJuego, nomJuego) => {
-    setSelectedJuego({ codJuego, nomJuego });
+  const handleSelectExperiencia = async (codExpe, nomJuego) => {
+    setSelectedExperiencia({ codExpe, nomJuego });
     setEstadisticas(null);
     setMessage({ text: "", type: "" });
 
     try {
-      const response = await fetch('http://localhost:4000/api/estadisticas/${codJuego}');
+      const response = await fetch(`http://localhost:4000/api/estadisticas/${codExpe}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -64,12 +64,12 @@ export default function Estadisticas() {
         <button
           className="back-button"
           onClick={() => navigate("/dashboard-encargado")}
-          style={{left:"-80px"}}
+          style={{ left: "-80px" }}
         >
           <IoArrowBack size={22} />
         </button>
 
-        <h2 className="title">Estadísticas de Juegos</h2>
+        <h2 className="title">Estadísticas de Experiencias</h2>
 
         {message.text && (
           <div
@@ -92,7 +92,7 @@ export default function Estadisticas() {
 
         {loading ? (
           <p style={{ textAlign: "center", padding: "20px" }}>
-            Cargando juegos...
+            Cargando experiencias...
           </p>
         ) : (
           <div
@@ -114,48 +114,39 @@ export default function Estadisticas() {
                 }}
               >
                 <IoStatsChart size={20} />
-                Seleccione un Juego
+                Seleccione una Experiencia
               </h3>
 
-              {juegos.length === 0 ? (
-                <p style={{ textAlign: "center", color: "#666" }}>
-                  No hay juegos disponibles
+              {experiencias.length === 0 ? (
+                <p style={{ textAlign: "center", color: "#000000ff" }}>
+                  No hay experiencias disponibles
                 </p>
               ) : (
                 <div style={{ display: "grid", gap: "10px" }}>
-                  {juegos.map((juego) => (
+                  {experiencias.map((experiencia) => (
                     <button
-                      key={juego.codJuego}
+                      key={experiencia.cod_Expe}
                       onClick={() =>
-                        handleSelectJuego(juego.codJuego, juego.nomJuego)
+                        handleSelectExperiencia(experiencia.cod_Expe, experiencia.nomJuego)
                       }
                       style={{
                         padding: "12px",
                         borderRadius: "6px",
                         border:
-                          selectedJuego?.codJuego === juego.codJuego
+                          selectedExperiencia?.codExpe === experiencia.cod_Expe
                             ? "2px solid #007bff"
                             : "1px solid #ddd",
                         backgroundColor:
-                          selectedJuego?.codJuego === juego.codJuego
+                          selectedExperiencia?.codExpe === experiencia.cod_Expe
                             ? "#e7f3ff"
                             : "#fff",
                         cursor: "pointer",
                         textAlign: "left",
                         transition: "all 0.2s",
                       }}
-                      onMouseEnter={(e) => {
-                        if (selectedJuego?.codJuego !== juego.codJuego) {
-                          e.currentTarget.style.boxShadow =
-                            "0 2px 4px rgba(0,0,0,0.1)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
                     >
                       <div style={{ fontWeight: "600", fontSize: "14px" }}>
-                        {juego.nomJuego}
+                        {experiencia.nomJuego}
                       </div>
                       <div
                         style={{
@@ -164,7 +155,7 @@ export default function Estadisticas() {
                           marginTop: "4px",
                         }}
                       >
-                        Código: {juego.codJuego}
+                        Código de Experiencia: {experiencia.cod_Expe}
                       </div>
                     </button>
                   ))}
@@ -173,7 +164,7 @@ export default function Estadisticas() {
             </div>
 
             <div>
-              {selectedJuego && estadisticas ? (
+              {selectedExperiencia && estadisticas ? (
                 <div
                   style={{
                     border: "2px solid #007bff",
@@ -194,6 +185,8 @@ export default function Estadisticas() {
                   </h3>
 
                   <div style={{ marginBottom: "20px" }}>
+
+                    {/* Estadísticas de las experiencias */}
                     <div
                       style={{
                         marginBottom: "15px",
@@ -212,7 +205,7 @@ export default function Estadisticas() {
                           fontWeight: "500",
                         }}
                       >
-                        Código de Juego
+                        Código de Experiencia
                       </label>
                       <div
                         style={{
@@ -351,7 +344,7 @@ export default function Estadisticas() {
                     </div>
                   </div>
                 </div>
-              ) : selectedJuego ? (
+              ) : selectedExperiencia ? (
                 <div
                   style={{
                     border: "2px solid #ddd",
@@ -380,7 +373,7 @@ export default function Estadisticas() {
                     style={{ margin: "0 auto 10px", opacity: 0.5 }}
                   />
                   <p style={{ margin: 0 }}>
-                    Seleccione un juego para ver sus estadísticas
+                    Seleccione una experiencia para ver sus estadísticas
                   </p>
                 </div>
               )}

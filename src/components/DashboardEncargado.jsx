@@ -46,16 +46,6 @@ export default function DashboardEncargado() {
         >
           Añadir nuevos Juegos
         </button>
-        <br></br>
-
-        {/* Botón Eliminar juegos*/}
-        <button
-          className="btn secondary"
-          style={{marginTop: "2px"}}
-          onClick={() => navigate("/eliminarJuego")}
-        >
-          Eliminar Juegos
-        </button>
         
       </div>
     </div>

@@ -57,6 +57,14 @@ export default function InscribirseExperiencia() {
 
   return (
     <div className="background">
+      <button
+          className="back-button"
+          onClick={() => navigate("/dashboard-estudiante")}
+          style={{ color: "white" }}
+        >
+          <IoArrowBack size={22} />
+        </button>
+
       <div
         className="login-card"
         style={{
@@ -70,14 +78,6 @@ export default function InscribirseExperiencia() {
           backdropFilter: "blur(8px)",
         }}
       >
-        <button
-          className="back-button"
-          onClick={() => navigate("/dashboard-estudiante")}
-          style={{ color: "white" }}
-        >
-          <IoArrowBack size={22} />
-        </button>
-
         <h2
           className="title"
           style={{ color: "white", textAlign: "center" }}
