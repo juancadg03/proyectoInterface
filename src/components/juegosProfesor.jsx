@@ -49,7 +49,7 @@ export default function JuegosProfesor() {
               type="button"
               onClick={() => navigate("/dashboard-profesor")}
               style={{
-                position: "fixed",          // 👈 fijo en pantalla
+                position: "fixed",          
                 top: "20px",
                 left: "20px",
                 width: "42px",
@@ -63,7 +63,7 @@ export default function JuegosProfesor() {
                 cursor: "pointer",
                 color: "#7DF9FF",
                 boxShadow: "0 0 12px rgba(125,249,255,0.7)",
-                zIndex: 9999,              // 👈 por encima de todo
+                zIndex: 9999,             
               }}
             >
               <IoArrowBack size={22} />

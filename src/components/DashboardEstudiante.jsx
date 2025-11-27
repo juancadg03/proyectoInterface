@@ -30,8 +30,7 @@ export default function DashboardEstudiante() {
           >
              Ver Juegos Disponibles
           </button>
-
-          {/* 🔥 NUEVO BOTÓN: INSCRIBIRSE A EXPERIENCIA */}
+          {/* INSCRIBIRSE A EXPERIENCIA */}
           <button
             className="btn secondary"
             onClick={() => navigate("/estudiante/inscribirse")}

@@ -11,7 +11,7 @@ export default function JuegosEstudiante() {
     try {
       const res = await fetch("http://localhost:4000/api/juegos");
       const data = await res.json();
-      console.log("🎮 Juegos recibidos:", data); // debug
+      console.log(" Juegos recibidos:", data); 
       setJuegos(data);
     } catch (e) {
       console.error("Error al cargar juegos", e);
@@ -22,7 +22,6 @@ export default function JuegosEstudiante() {
     cargarJuegos();
   }, []);
 
-  // 🔙 Handler del botón de volver
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -49,12 +48,11 @@ export default function JuegosEstudiante() {
         overflowY: "auto",
       }}
     >
-      {/* Botón volver (siempre visible arriba a la izquierda) */}
       <button
         type="button"
         onClick={() => navigate("/dashboard-estudiante")}
         style={{
-          position: "fixed",          // 👈 fijo en pantalla
+          position: "fixed",       
           top: "20px",
           left: "20px",
           width: "42px",
@@ -68,7 +66,7 @@ export default function JuegosEstudiante() {
           cursor: "pointer",
           color: "#7DF9FF",
           boxShadow: "0 0 12px rgba(125,249,255,0.7)",
-          zIndex: 9999,              // 👈 por encima de todo
+          zIndex: 9999,            
         }}
       >
         <IoArrowBack size={22} />

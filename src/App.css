@@ -252,9 +252,7 @@ body {
   border-radius: 6px;
 }
 
-/* ============================
-   CSS EXCLUSIVO GestiónPrestamos
-   ============================ */
+/* CSS EXCLUSIVO GestiónPrestamos*/
 
 .gp-wrapper {
   width: 100%;
@@ -294,8 +292,8 @@ body {
 
 /* LISTA DE RESERVAS */
 .gp-reservas-list {
-  max-height: none;      /* permite crecer */
-  overflow-y: visible;   /* deja que la página scrollee */
+  max-height: none;    
+  overflow-y: visible;   
 }
 
 .gp-reserva-card {
@@ -335,9 +333,7 @@ body {
   background-color: #e5eeff;
 }
 
-/* ===========================
-   CONTENEDOR PRINCIPAL
-=========================== */
+/* CONTENEDOR PRINCIPAL*/
 .reservas-wrapper {
   position: fixed;
   inset: 0;
@@ -348,9 +344,7 @@ body {
   color: white;
 }
 
-/* ===========================
-   TÍTULO PRINCIPAL
-=========================== */
+/* TÍTULO PRINCIPAL*/
 .reservas-title {
   text-align: center;
   font-size: 36px;
@@ -359,9 +353,7 @@ body {
   margin-bottom: 40px;
 }
 
-/* ===========================
-   TARJETAS DE SECCIÓN
-=========================== */
+/* TARJETAS DE SECCIÓN*/
 .card-glass {
   background: rgba(255, 255, 255, 0.1);
   padding: 30px;
@@ -381,9 +373,7 @@ body {
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* ===========================
-   INPUTS
-=========================== */
+/*INPUTS */
 .input-glass {
   width: 100%;
   padding: 10px 12px;
@@ -400,9 +390,7 @@ body {
   color: #d0d0d0;
 }
 
-/* ===========================
-   BOTONES
-=========================== */
+/*BOTONES*/
 .btn-primary {
   background: #7df9ff;
   color: #000;
@@ -433,9 +421,7 @@ body {
   background: rgba(255, 255, 255, 0.35);
 }
 
-/* ===========================
-   BOTÓN FLOTANTE VOLVER
-=========================== */
+/*BOTÓN FLOTANTE VOLVER */
 .back-btn {
   position: fixed;
   top: 30px;
@@ -454,9 +440,7 @@ body {
   background: rgba(255, 255, 255, 0.18);
 }
 
-/* ===========================
-   SECCIONES EN FILA
-=========================== */
+/* SECCIONES EN FILA*/
 .reservas-grid {
   display: flex;
   gap: 40px;
@@ -464,9 +448,7 @@ body {
   align-items: flex-start;
 }
 
-/* ===========================
-   TARJETA PARA EDICIÓN
-=========================== */
+/* TARJETA PARA EDICIÓN*/
 .card-edit {
   margin-top: 25px;
   padding: 18px;
@@ -476,9 +458,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* ===========================
-   TÍTULOS DE SECCIÓN
-=========================== */
+/* TÍTULOS DE SECCIÓN*/
 .section-title {
   color: #7df9ff;
   margin-bottom: 10px;

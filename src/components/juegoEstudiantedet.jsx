@@ -92,7 +92,6 @@ export default function JuegoEstudianteDetalle() {
           {juego.nomJuego}
         </h2>
 
-        {/* Layout en dos columnas: izquierda datos + portada, derecha descripción grande */}
         <div
           style={{
             display: "flex",
@@ -163,7 +162,7 @@ export default function JuegoEstudianteDetalle() {
             </p>
           </div>
 
-          {/* Columna derecha: descripción grande */}
+          {/* Columna derecha*/}
           <div
             style={{
               flex: "1 1 320px",

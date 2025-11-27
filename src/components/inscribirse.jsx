@@ -58,7 +58,6 @@ export default function InscribirseExperiencia() {
   return (
     <div className="background" style={{ minHeight: "100vh", paddingTop: "40px" }}>
 
-      {/* 🔙 Back Button FIXED + ESTÉTICO */}
       <button
         onClick={() => navigate("/dashboard-estudiante")}
         style={{
@@ -81,7 +80,6 @@ export default function InscribirseExperiencia() {
         <IoArrowBack size={22} />
       </button>
 
-      {/* 📌 CONTENEDOR PRINCIPAL ALARGADO */}
       <div
         className="login-card"
         style={{

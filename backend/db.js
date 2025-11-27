@@ -1,9 +1,9 @@
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 
-dotenv.config(); // 👈 muy importante
+dotenv.config(); 
 
-console.log("DB_USER:", process.env.DB_USER); // prueba de lectura
+console.log("DB_USER:", process.env.DB_USER); 
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,

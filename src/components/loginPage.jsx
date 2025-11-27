@@ -34,7 +34,7 @@ export default function LoginPage() {
       localStorage.setItem("cedula", data.cedula);
       localStorage.setItem("rol", data.tipo_rol);
 
-      // Guardar nombre (CORRECCIÓN)
+      // Guardar nombre 
       if (data.nombre) {
         localStorage.setItem("nombre", data.nombre);
       }

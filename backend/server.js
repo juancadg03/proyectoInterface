@@ -23,12 +23,11 @@ app.use(
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, "public", "portadas");
-    // Crea la carpeta si no existe
     fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const codJuego = req.body.codJuego; // viene del FormData
+    const codJuego = req.body.codJuego; 
     const ext = ".jpg";
     cb(null, `${codJuego}${ext}`);
 
@@ -41,7 +40,7 @@ const upload = multer({ storage });
 
 app.post(
   "/api/juegos/portada",
-  upload.single("portada"), // "portada" = nombre del campo en el FormData
+  upload.single("portada"), 
   (req, res) => {
     try {
       const { codJuego } = req.body;
@@ -384,9 +383,7 @@ app.get("/api/estadisticas/:codExpe", async (req, res) => {
   }
 });
 
-// =======================================================
 //        GESTIÓN DE RESERVAS (ENCARGADO)
-// =======================================================
 
 // GET: listar horarios reservados
 app.get("/api/encargado/horarios", async (req, res) => {
@@ -665,9 +662,8 @@ app.get("/api/juegos/:id", async (req, res) => {
   }
 });
 
-// =======================================================
 // POST: Evaluación (CORREGIDO)
-// =======================================================
+
 app.post("/api/evaluar", async (req, res) => {
   try {
     const { cod_Expe, cedEvaluador, ranking, rol } = req.body;
@@ -679,9 +675,9 @@ app.post("/api/evaluar", async (req, res) => {
       return res.status(400).json({ error: "Datos incompletos" });
     }
 
-    // ===============================
+
     // 1. OBTENER NOMBRE SEGÚN ROL
-    // ===============================
+  
     let nomEvaluador = null;
 
     if (rol === "profesor") {
@@ -710,9 +706,8 @@ app.post("/api/evaluar", async (req, res) => {
       });
     }
 
-    // ===============================
     // 2. VERIFICAR EXPERIENCIA
-    // ===============================
+
     const [check] = await pool.execute(
       "SELECT cod_evalu FROM Experiencia WHERE cod_Expe = ?",
       [cod_Expe]
@@ -728,9 +723,9 @@ app.post("/api/evaluar", async (req, res) => {
         .json({ error: "Esta experiencia ya fue evaluada" });
     }
 
-    // ===============================
+
     // 3. GUARDAR EVALUACIÓN Y ACTUALIZAR EXPERIENCIA
-    // ===============================
+
     const [[maxEval]] = await pool.execute(
       "SELECT COALESCE(MAX(cod_Eval), 0) AS maximo FROM Evaluaciones"
     );
@@ -759,9 +754,9 @@ app.post("/api/evaluar", async (req, res) => {
 
 
 
-// =======================================================
+
 // GET: Experiencias evaluables (profesor o estudiante)
-// =======================================================
+
 app.get("/api/experiencias/evaluables/:cedula/:rol", async (req, res) => {
   const { cedula, rol } = req.params;
 
@@ -917,9 +912,9 @@ app.get("/api/encargado/solicitudes", async (req, res) => {
   }
 });
 
-// =======================================================
+
 // SERVIDOR
-// =======================================================
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server corriendo en puerto ${PORT}`);

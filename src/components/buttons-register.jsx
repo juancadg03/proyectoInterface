@@ -7,7 +7,6 @@ export default function ButtonsRegister({ onRegister }) {
 
   return (
     <div className="buttons">
-      {/* Llama a la función de registro si existe */}
       <button
         className="btn primary reg"
         onClick={() => {

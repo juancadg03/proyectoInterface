@@ -62,12 +62,28 @@ export default function Estadisticas() {
         style={{ maxWidth: "1000px", maxHeight: "90vh", overflowY: "auto" }}
       >
         <button
-          className="back-button"
-          onClick={() => navigate("/dashboard-encargado")}
-          style={{ left: "-80px" }}
-        >
-          <IoArrowBack size={22} />
-        </button>
+                type="button"
+                onClick={() => navigate("/dashboard-encargado")}
+                style={{
+                  position: "fixed",          
+                  top: "20px",
+                  left: "20px",
+                  width: "42px",
+                  height: "42px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(15,23,42,0.95)",
+                  borderRadius: "999px",
+                  border: "1px solid #7DF9FF",
+                  cursor: "pointer",
+                  color: "#7DF9FF",
+                  boxShadow: "0 0 12px rgba(125,249,255,0.7)",
+                  zIndex: 9999,             
+                }}
+              >
+                <IoArrowBack size={22} />
+              </button>
 
         <h2 className="title">Estadísticas de Experiencias</h2>
 
