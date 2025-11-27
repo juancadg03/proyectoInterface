@@ -17,8 +17,10 @@ export default function AnadirJuego() {
     descripcion: "",
     rangoEdad: "",
     dificultad: "",
-    numCopias: 3
+    numCopias: 3,
   });
+
+  const [imagenFile, setImagenFile] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -69,19 +71,25 @@ export default function AnadirJuego() {
     e.preventDefault();
 
     if (formData.numCopias < 3) {
-      setMessage({ text: "El número de copias debe ser mínimo 3", type: "error" });
+      setMessage({
+        text: "El número de copias debe ser mínimo 3",
+        type: "error",
+      });
       return;
     }
 
     if (!/^\d+$/.test(formData.rangoEdad)) {
-      setMessage({ text: "El rango de edad debe ser un número entero (ej: 8)", type: "error" });
+      setMessage({
+        text: "El rango de edad debe ser un número entero (ej: 8)",
+        type: "error",
+      });
       return;
     }
 
     if (!/^\w+$/.test(formData.codJuego)) {
       setMessage({
         text: "El código de juego solo debe contener letras y números.",
-        type: "error"
+        type: "error",
       });
       return;
     }
@@ -90,10 +98,12 @@ export default function AnadirJuego() {
     setMessage({ text: "", type: "" });
 
     try {
+      const codJuegoNumerico = parseInt(formData.codJuego.replace(/\D/g, ""));
+
       const dataToSend = {
         ...formData,
         cedEncargado: cedEncargado,
-        codJuego: parseInt(formData.codJuego.replace(/\D/g, "")),
+        codJuego: codJuegoNumerico,
         duracion: parseInt(formData.duracion),
         cntJugadores: parseInt(formData.cntJugadores),
         numCopias: parseInt(formData.numCopias),
@@ -106,26 +116,78 @@ export default function AnadirJuego() {
             : 3,
       };
 
+      // 1) Crear el juego (inserta en SQL, pero el body igual es JSON)
       const response = await fetch("http://localhost:4000/api/juegos", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(dataToSend)
+        body: JSON.stringify(dataToSend),
       });
 
-      if (response.ok) {
-        setMessage({ text: "Juego añadido exitosamente", type: "success" });
-        setTimeout(() => navigate("/DashboardEncargado"), 2000);
-      } else {
+      if (!response.ok) {
         const error = await response.json();
         setMessage({
-          text: error.message || "Error al añadir el juego",
-          type: "error"
+          text: error.error || error.message || "Error al añadir el juego",
+          type: "error",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 2) Subir la imagen (si el usuario eligió una)
+      if (imagenFile) {
+        try {
+          const formDataImg = new FormData();
+
+          // PRIMERO el codJuego
+          formDataImg.append("codJuego", codJuegoNumerico.toString());
+          // LUEGO el archivo
+          formDataImg.append("portada", imagenFile);
+
+          const uploadRes = await fetch(
+            "http://localhost:4000/api/juegos/portada",
+            {
+              method: "POST",
+              body: formDataImg,
+            }
+          );
+
+          if (!uploadRes.ok) {
+            console.error("Error al subir la portada");
+            setMessage({
+              text:
+                "Juego añadido, pero hubo un problema subiendo la portada. Revisa el servidor.",
+              type: "error",
+            });
+          } else {
+            setMessage({
+              text: "Juego y portada añadidos exitosamente",
+              type: "success",
+            });
+          }
+        } catch (err) {
+          console.error("Error en la subida de portada:", err);
+          setMessage({
+            text:
+              "Juego añadido, pero hubo un problema subiendo la portada (excepción).",
+            type: "error",
+          });
+        }
+      } else {
+        setMessage({
+          text: "Juego añadido exitosamente (sin portada)",
+          type: "success",
         });
       }
+
+      setTimeout(() => navigate("/DashboardEncargado"), 2000);
     } catch (error) {
-      setMessage({ text: "Error de conexión. Intente nuevamente.", type: "error" });
+      console.error(error);
+      setMessage({
+        text: "Error de conexión. Intente nuevamente.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -133,7 +195,6 @@ export default function AnadirJuego() {
 
   return (
     <div className="background">
-
       <button
         onClick={() => navigate("/dashboard-encargado")}
         style={{
@@ -143,23 +204,28 @@ export default function AnadirJuego() {
           background: "none",
           border: "none",
           cursor: "pointer",
-          zIndex: 9999
+          zIndex: 9999,
         }}
       >
         <IoArrowBack size={28} color="white" />
       </button>
 
-      <div className="login-card" style={{
-        maxWidth: "600px",
-        maxHeight: "90vh",
-        overflowY: "auto",
-        padding: "25px",
-        borderRadius: "12px",
-        background: "rgba(0,0,0,0.35)",
-        backdropFilter: "blur(4px)"
-      }}>
-        
-        <h2 className="title" style={{ color: "white", textAlign: "center" }}>
+      <div
+        className="login-card"
+        style={{
+          maxWidth: "600px",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          padding: "25px",
+          borderRadius: "12px",
+          background: "rgba(0,0,0,0.35)",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        <h2
+          className="title"
+          style={{ color: "white", textAlign: "center" }}
+        >
           Añadir Nuevo Juego
         </h2>
 
@@ -170,7 +236,8 @@ export default function AnadirJuego() {
               padding: "12px",
               marginBottom: "15px",
               borderRadius: "6px",
-              backgroundColor: message.type === "success" ? "#064E3B" : "#7F1D1D",
+              backgroundColor:
+                message.type === "success" ? "#064E3B" : "#7F1D1D",
               color: "white",
             }}
           >
@@ -179,7 +246,6 @@ export default function AnadirJuego() {
         )}
 
         <form onSubmit={handleSubmit}>
-
           <div style={containerStyle}>
             <label style={labelStyle}>Código del Juego *</label>
             <input
@@ -206,6 +272,42 @@ export default function AnadirJuego() {
               onBlur={inputBlur}
               style={inputStyle}
             />
+          </div>
+
+          {/* PORTADA ARRIBA Y GIGANTE */}
+          <div style={containerStyle}>
+            <label style={labelStyle}>Portada del juego (imagen)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setImagenFile(
+                  e.target.files && e.target.files[0]
+                    ? e.target.files[0]
+                    : null
+                )
+              }
+              style={{
+                display: "block",
+                marginTop: "4px",
+                padding: "6px",
+                borderRadius: "8px",
+                border: "1px solid #4B5563",
+                background: "#020617",
+                color: "#E5E7EB",
+              }}
+            />
+            {imagenFile && (
+              <p
+                style={{
+                  color: "#E5E7EB",
+                  marginTop: "6px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Archivo seleccionado: {imagenFile.name}
+              </p>
+            )}
           </div>
 
           <div style={containerStyle}>
@@ -237,7 +339,9 @@ export default function AnadirJuego() {
           </div>
 
           <div style={containerStyle}>
-            <label style={labelStyle}>Cantidad Máxima de Jugadores *</label>
+            <label style={labelStyle}>
+              Cantidad Máxima de Jugadores *
+            </label>
             <input
               type="number"
               name="cntJugadores"
@@ -324,7 +428,9 @@ export default function AnadirJuego() {
           </div>
 
           <div style={containerStyle}>
-            <label style={labelStyle}>Número de Copias (mínimo 3) *</label>
+            <label style={labelStyle}>
+              Número de Copias (mínimo 3) *
+            </label>
             <input
               type="number"
               name="numCopias"
@@ -352,7 +458,7 @@ export default function AnadirJuego() {
               fontSize: "16px",
               cursor: "pointer",
               transition: "0.2s",
-              marginTop:"20px"
+              marginTop: "20px",
             }}
           >
             {loading ? "Añadiendo..." : "Publicar Juego"}

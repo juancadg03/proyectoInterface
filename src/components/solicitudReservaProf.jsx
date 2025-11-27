@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 
+
 export default function SolicitudReservaProfesor() {
   const { codJuego } = useParams();
   const navigate = useNavigate();

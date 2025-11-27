@@ -80,7 +80,7 @@ function App() {
         <Route path="/anadirJuego" element={<AnadirJuego/>} />
         <Route path="/juegosProfesor" element={<JuegosProfesor/>} />
         <Route path="/juegosEstudiantes" element={<JuegosEstudiante/>} />
-        <Route path="/profesor/reservar/:codJuego" element={<SolicitudReservaProfesor />}/>
+        <Route path="/solicitudReservaProf/:codJuego" element={<SolicitudReservaProfesor />}/>
         <Route path="/evaluarExperiencia" element={<EvaluarExperiencia/>} />
         <Route path="/estudiante/juego/:codJuego" element={<JuegoEstudianteDetalle />} />
         <Route path="/estudiante/inscribirse" element={<InscribirseExperiencia />} />

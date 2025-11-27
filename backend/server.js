@@ -5,10 +5,69 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("./db");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(
+  "/portadas",
+  express.static(path.join(__dirname, "public", "portadas"))
+);
+
+// ---------- CONFIGURACIÓN DE MULTER PARA LA PORTADA ----------
+
+// Definimos dónde se guarda y con qué nombre
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, "public", "portadas");
+    // Crea la carpeta si no existe
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const codJuego = req.body.codJuego; // viene del FormData
+    const ext = ".jpg";
+    cb(null, `${codJuego}${ext}`);
+
+  },
+});
+
+const upload = multer({ storage });
+
+// ---------- RUTA PARA SUBIR LA PORTADA ----------
+
+app.post(
+  "/api/juegos/portada",
+  upload.single("portada"), // "portada" = nombre del campo en el FormData
+  (req, res) => {
+    try {
+      const { codJuego } = req.body;
+
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ message: "No se recibió archivo de portada" });
+      }
+
+      // Ruta pública desde el frontend
+      const publicPath = `/portadas/${req.file.filename}`;
+
+      return res.status(200).json({
+        message: "Portada subida correctamente",
+        codJuego,
+        portada: publicPath,
+      });
+    } catch (err) {
+      console.error("Error al subir portada:", err);
+      return res
+        .status(500)
+        .json({ message: "Error interno al subir la portada" });
+    }
+  }
+);
 
 // Helper para formatear Date a DATETIME SQL
 function toSQLDateTime(date) {
@@ -213,7 +272,21 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/juegos", async (req, res) => {
   try {
     const [rows] = await pool.execute(
-      "SELECT codJuego, nomJuego, tematica, duracion, cntJugadores, competencias, idioma, descripcion, rangoEdad, dificultad, numCopias FROM Juego ORDER BY nomJuego"
+      `SELECT 
+         codJuego, 
+         nomJuego, 
+         tematica, 
+         duracion, 
+         cntJugadores, 
+         competencias, 
+         idioma, 
+         descripcion, 
+         rangoEdad, 
+         dificultad, 
+         numCopias,
+         CONCAT('/portadas/', codJuego, '.jpg') AS portada
+       FROM Juego
+       ORDER BY nomJuego`
     );
     res.json(rows);
   } catch (err) {
